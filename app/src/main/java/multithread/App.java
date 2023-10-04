@@ -13,7 +13,7 @@ public class App {
   public static void main(String[] args) {
     // threadsInitialConcepts();
 
-    var meuRunnable = new MeuRunnable2();
+    var meuRunnable = new MeuRunnableRightWaySynchronized();
     var t0 = new Thread(meuRunnable);
     var t1 = new Thread(meuRunnable);
     var t2 = new Thread(meuRunnable);
@@ -33,6 +33,69 @@ public class App {
     public void run() {
       i++;
       System.out.println(Thread.currentThread().getName() + ":" + i);
+    }
+  }
+
+  public static class MeuRunnableSynchronized implements Runnable {
+    @Override
+    public synchronized void run() {
+      i++;
+      System.out.println(Thread.currentThread().getName() + ":" + i);
+    }
+  }
+
+  public static void imprime() {
+    synchronized (App.class) {
+      i++;
+      System.out.println(Thread.currentThread().getName() + ":" + i);
+    }
+  }
+
+  public static class MeuRunnableMethod implements Runnable {
+    @Override
+    public synchronized void run() {
+      imprime();
+    }
+  }
+
+  public static class MeuRunnableBlockSynchronized implements Runnable {
+    @Override
+    public void run() {
+      synchronized (this) {
+        i++;
+        System.out.println(Thread.currentThread().getName() + ":" + i);
+      }
+    }
+  }
+
+  public static class MeuRunnable2BlockSynchronized implements Runnable {
+    static Object lock1 = new Object();
+    static Object lock2 = new Object();
+    @Override
+    public void run() {
+      synchronized (lock1) {
+        i++;
+        System.out.println(Thread.currentThread().getName() + ":" + i);
+      }
+      synchronized (lock2) {
+        i++;
+        System.out.println(Thread.currentThread().getName() + ":" + i);
+      }
+    }
+  }
+
+  public static class MeuRunnableRightWaySynchronized implements Runnable {
+    @Override
+    public void run() {
+      int j;
+      synchronized (this) {
+        i++;
+        j = i * 2;
+      }
+
+      double jElevadoA100 = Math.pow(j, 100);
+      double sqrt = Math.sqrt(jElevadoA100);
+      System.out.println(Thread.currentThread().getName() + ":" + sqrt);
     }
   }
 
