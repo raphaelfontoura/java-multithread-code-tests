@@ -1,5 +1,6 @@
 package sync;
 
+import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,14 +14,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class SincronizarColecoesV2 {
 
-  // Coleções que são Threadsafe (cuidado com performance no caso desse CopyOnWriteArrayList)
-  // private static List<String> lista = new CopyOnWriteArrayList<>(); 
+  // Coleções que são Threadsafe (cuidado com performance no caso desse
+  // CopyOnWriteArrayList)
+  // private static List<String> lista = new CopyOnWriteArrayList<>();
 
   private static Map<Integer, String> mapa = new ConcurrentHashMap<>(); // Threadsafe. Pode causar performance problema.
 
-  private static Queue<String> fila = new LinkedBlockingQueue<>(); // é possível limitar o tamanho da fila passando um integer no seu construtor
+  private static Queue<String> fila = new LinkedBlockingQueue<>(); // é possível limitar o tamanho da fila passando um
+                                                                   // integer no seu construtor
   // LinkedBlockingDeque -> pode ser manipulado dados do início e fim de fila.
-  
+
   public static void main(String[] args) throws InterruptedException {
 
     var runnable = new MyRunnable();
@@ -31,9 +34,13 @@ public class SincronizarColecoesV2 {
     t0.start();
     t1.start();
     t2.start();
-    Thread.sleep(500);
-    System.out.println(mapa);
-    System.out.println(fila);
+    if (t0.getState() != State.TERMINATED
+        || t1.getState() != State.TERMINATED
+        || t2.getState() != State.TERMINATED) {
+      mapa.forEach( (num, value) -> System.out.println("Key: " + num + " Value: " + value));
+      System.out.println(fila);
+    }
+
   }
 
   public static class MyRunnable implements Runnable {
@@ -44,5 +51,5 @@ public class SincronizarColecoesV2 {
       fila.add("Inserido na fila");
     }
   }
-  
+
 }
