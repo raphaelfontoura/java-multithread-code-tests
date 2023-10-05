@@ -16,7 +16,8 @@ public class ExecutorsSingleThreadCallable {
       Future<String> future = executor.submit(new Tarefa());
       
       System.out.println(future.isDone());
-      System.out.println(future.get());
+      // System.out.println(future.get());
+      System.out.println(future.get(1, TimeUnit.SECONDS));
       System.out.println(future.isDone());
       // executor.shutdown();
       // executor.awaitTermination(10, TimeUnit.SECONDS);
