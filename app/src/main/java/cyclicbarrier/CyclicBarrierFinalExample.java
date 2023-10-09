@@ -6,6 +6,9 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.google.common.util.concurrent.AtomicDouble;
 
 public class CyclicBarrierFinalExample {
 
@@ -14,6 +17,7 @@ public class CyclicBarrierFinalExample {
   private static Runnable r1;
   private static Runnable r2;
   private static Runnable r3;
+  private static AtomicDouble resultadoSomado = new AtomicDouble(0);
 
   public static void main(String[] args) {
 
@@ -21,14 +25,16 @@ public class CyclicBarrierFinalExample {
 
     Runnable sumarizacao = () -> {
       System.out.println("Somando tudo.");
-      double resultadoFinal = 0;
+      double resultadoParcial = 0;
       // resultadoFinal += resultados.poll();
       // resultadoFinal += resultados.poll();
       // resultadoFinal += resultados.poll();
       for (double _resultado : resultados) {
-        resultadoFinal += resultados.poll();
+        resultadoParcial += resultados.poll();
       }
-      System.out.println("Resultado final: " + resultadoFinal);
+      System.out.println("Resultado parcial: " + resultadoParcial);
+      resultadoSomado.getAndAdd(resultadoParcial);
+      System.out.println("Resultado somado: " + resultadoSomado.get());
       System.out.println("=======================");
       restart();
     };
